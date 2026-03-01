@@ -1,0 +1,452 @@
+
+ [openai/gpt-oss-20b] Generated prediction:  {
+  "id": "chatcmpl-ej0qwqyui77hwk7allksqi",
+  "object": "chat.completion",
+  "created": 1772364753,
+  "model": "openai/gpt-oss-20b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning": "We have a user asking \"I want to order food, are you open?\" The system says we need to call GetCustomerDetails with WhatsApp number. But the conversation context hasn't included that. We need to get the customer details first.\n\nThe user is new or existing? We don't know. So we should start by calling GetCustomerDetails. That will give us Id, Name, Number, Address, etc. Then check if open using Restaurant_Status. Also read menu, but only after verifying open.\n\nWe must not ask for name unless needed; but since it's a new conversation we need to get customer details: call GetCustomerDetails first. Then proceed accordingly.\n\nBut we don't have the number. The system says on new conversation immediately call GetCustomerDetails using WhatsApp number. We can pass empty input? The tool expects no input. So we will call GetCustomerDetails().\n\nWe must adhere to style: short, friendly greeting. After retrieving details, if customer exists, greet with name; else greet politely with \"Usman Sabir\" placeholder.\n\nThen check restaurant status. If closed or offline, refuse politely. Then ask for order.\n\nBut the user is just asking about open. We can respond: \"Yes we are open\" but also gather info.\n\nWe need to call Restaurant_Status tool. The response will include easyPaisa number, min order amount, FAQ etc. But if restaurant closed or on break, we must politely refuse.\n\nSo steps:\n\n1. Call GetCustomerDetails\n2. If success, check status: GetRestaurantStatus\n3. Provide open/closed info.\n4. Ask for items or confirm if they want to place an order.\n\nWe might also call Read_Menu_Tool to show menu? But user just wants to know if open. So we can say \"Yes we are open and ready to take orders\".\n\nBut the system says that before ANY order handling, call Restaurant_Status. We need to do it anyway.\n\nOk let's get customer details first: Call GetCustomerDetails().\n\nThen get restaurant status: Call Restaurant_Status()\n\nWe'll then respond accordingly. If open, we can say \"Yes, we are open\" and ask if they'd like to place an order.\n\nWe should not give them a link to order online unless they request. We will keep it simple.\n\nThus:\n\n- Assistant calls GetCustomerDetails() first.\n- Then calls Restaurant_Status()\n- Response: \"Hello [Name]! Yes, we're open for orders. What would you like to order?\" (If new customer, greet with \"Usman Sabir\").\n\nWe need to check the tool's response format. The user didn't provide any prior context; but we will call GetCustomerDetails.\n\nWe also might want to read menu: The system says at start of each order call Read Menu Tool. But here they haven't placed an order yet. We can just ask them to specify items, and later when they do, we will read the menu.\n\nOk let's proceed.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "945045497",
+            "function": {
+              "name": "GetCustomerDetails",
+              "arguments": "{}"
+            }
+          }
+        ]
+      },
+      "logprobs": null,
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2773,
+    "completion_tokens": 617,
+    "total_tokens": 3390
+  },
+  "stats": {},
+  "system_fingerprint": "openai/gpt-oss-20b"
+}
+
+ [openai/gpt-oss-20b] Generated prediction:  {
+  "id": "chatcmpl-oq4ojy18yopfpgarca5r",
+  "object": "chat.completion",
+  "created": 1772364761,
+  "model": "openai/gpt-oss-20b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning": "We have the conversation:\n\nUser: \"I want to order food, are you open?\"\n\nAssistant called GetCustomerDetails and got details for customer with number 923457727702 (which matches user). They are existing. According to startup flow:\n\n- If customer exists:\n  - Greet using saved name (Hi/Hello etc.)\n  - Immediately call GetUserOrder to fetch latest successful order\n  - Build DefaultOrderContext from last order: delivery_or_pickup, delivery_address (if Delivery), payment_method (optional preference)\n\nAlso need to check Restaurant_Status. But before that we should greet the user.\n\nWe also have to read menu tool? It says start of each order, call Read Menu Tool. But we are still at initial stage. The flow:\n\n1. GetCustomerDetails -> done\n2. If existing: Greet using saved name\n3. Immediately call GetUserOrder to fetch latest successful order\n4. Build DefaultOrderContext from last order\n5. Call Restaurant_Status\n6. Read Menu Tool\n7. If context mismatch -> GetWhatsAppChatHistory\n\nWe should do step 3 now: get user order.\n\nAlso we might need to check if the restaurant is open. That is next step after status.\n\nThus, let's call GetUserOrder with input maybe empty or \"latest\". We don't know what input format required; earlier tool signature says GetUserOrder({input?: string}) => any. Likely we can pass nothing. Let's try.\n\nAlso we should check Restaurant_Status. But maybe we should do it before reading menu? The instructions: \"Before ANY order handling, call Restaurant_Status.\" So after greeting and fetching last order context, we should call Restaurant_Status to confirm open. Then Read Menu Tool. And if context mismatch -> GetWhatsAppChatHistory.\n\nOk.\n\nSo first greet the user with their name \"Usman\". But they didn't explicitly say name; but we know from database it's Usman. We'll do a friendly greeting: \"Hello Usman! I'm glad you're interested in ordering.\" Then ask about order.\n\nBut we also need to check status: call Restaurant_Status tool. Let's do that now.\n\nWe should keep it short. Also we might want to show the open status and maybe mention easyPaisa number, min order amount, FAQ info if needed.\n\nWe'll also fetch last order with GetUserOrder. Then we can use DefaultOrderContext.\n\nAlso note that user asked \"are you open?\" So we need to respond about opening hours. The tool will give us status.\n\nLet's call Restaurant_Status.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "384595282",
+            "function": {
+              "name": "Restaurant_Status",
+              "arguments": "{}"
+            }
+          }
+        ]
+      },
+      "logprobs": null,
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2917,
+    "completion_tokens": 536,
+    "total_tokens": 3453
+  },
+  "stats": {},
+  "system_fingerprint": "openai/gpt-oss-20b"
+}
+
+ [openai/gpt-oss-20b] Generated prediction:  {
+  "id": "chatcmpl-s4tki5dkkqnjfcho4b2wx",
+  "object": "chat.completion",
+  "created": 1772364768,
+  "model": "openai/gpt-oss-20b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hi Usman!  \nWe’re currently closed, but we’ll open tomorrow at 8 am. If you’d like to place an order in advance, you can do so on our website or through Foodpanda. Let me know if you’d like a link.",
+        "reasoning": "We have the conversation: user says \"I want to order food, are you open?\" The system says we should call GetCustomerDetails (which we did). We got a record for Usman. Then we called Restaurant_Status; result shows status is \"Close\" and IsOffline=1.\n\nThus the restaurant is closed. According to guidelines: if closed, politely refuse orders.\n\nWe must not mention tool errors or internal issues. We need to give friendly message that we are currently closed but maybe open next day or open at certain hours? The status says \"Status\":\"Close\", last poll time etc. Also \"IsOffline\":1 indicates short break/offline. But the restaurant hours show 08:00 AM to 06:00 PM.\n\nWe should respond accordingly, e.g., \"Sorry Usman, we are currently closed but will open tomorrow at 8am\" or something.\n\nThe guidelines say: If closed → politely refuse orders. We can mention that the restaurant is currently closed and ask if they'd like to place an order for later? Or offer website link. According to system prompt: \"Restaurant_Status\": returns status, easyPaisa number, min order amount etc. But we need not provide internal errors.\n\nWe must also consider that this user might want to place an order. We should politely say we are closed. The user is presumably in same area. They can use the website or wait until next day. According to guidelines: \"If closed → politely refuse orders\". So let's do that.\n\nAlso the guidelines mention about offering online ordering link if they face difficulty on WhatsApp or ask for online order placement. But here the user asks are you open? We can respond with a friendly message, maybe provide hours and a website link.\n\nWe must not reveal that we fetched status etc. Just answer politely: \"Sorry Usman, we are currently closed but will be open from 8am to 6pm. You can place an order on our website or wait until tomorrow.\" Also give the easyPaisa number for online orders? The guidelines say \"If user wants online payment, share EasyPaisa number\". But they haven't asked yet.\n\nWe should ask if they'd like to place an order for next day or do we provide link. The system says: \"If user face difficulty in placing order on WhatsApp or asks for online order placement, call this tool to send him order link\". But here the user just wants to know if open. We can politely respond with hours and offer website.\n\nWe should not mention internal status. So we will produce a friendly response: \"Hi Usman, we are currently closed but will reopen tomorrow at 8am. You can also place an order on our website or through foodpanda.\" Let's see guidelines: Under \"Restaurant Status\" they gave the FAQ etc. We can provide the link for ordering online.\n\nThus answer: something like:\n\n\"Sorry Usman, we’re closed right now (closed). Our next opening is tomorrow at 8am. If you’d like to place an order in advance, you can use our website or foodpanda link.\" Provide the easyPaisa number maybe not needed until payment.\n\nWe should keep it short. We need to ask if they want to place for next day? The user hasn't asked that yet. We could just provide info and ask if they'd like a link. That would be friendly.\n\nThus final answer: \"Hi Usman, we’re currently closed but will open tomorrow at 8am. If you’d like to place an order now, you can do it via our website (link) or foodpanda.\" We can add the easyPaisa number for online payment? The user hasn't requested that.\n\nThus final answer: short friendly message.",
+        "tool_calls": []
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 3994,
+    "completion_tokens": 822,
+    "total_tokens": 4816
+  },
+  "stats": {},
+  "system_fingerprint": "openai/gpt-oss-20b"
+}
+
+
+
+Received request: POST to /v1/chat/completions with body  {
+  "model": "openai/gpt-oss-20b",
+  "stream": false,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWhatsAppChatHistory",
+        "description": "Call this tool to get WhatsApp chat history. It helps to understand context better for any out of context message.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "SendOrderNowMessage",
+        "description": "Call this tool to send order link to user if he or... <Truncated in logs> ...r placement, call this tool to send him order link",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetUserOrder",
+        "description": "Call this tool to get customer orders with status along and complete order data",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "CreateOrderModificationRequest",
+        "description": "Call this tool to create order modifications reque... <Truncated in logs> ...uest along with Request message in \"Request\" field",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "OrderId": {
+              "type": "number",
+              "description": "Numeric customer \"Order Number\" like 23"
+            },
+            "Request": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "OrderId",
+            "Request"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetOrderModificationRequests",
+        "description": "Call this tool to get user's modification requests... <Truncated in logs> ... 0, chef rejected it with reason in \"Reason\" field",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetDeliveryCharges",
+        "description": "",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_amount": {
+              "type": "number",
+              "description": "total food amount without delivery charges"
+            },
+            "latitude": {
+              "type": "string"
+            },
+            "longitude": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_amount",
+            "latitude",
+            "longitude"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "CreateOrder",
+        "description": "Call this tool to create order. ",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "delivery_charges": {
+              "type": "number",
+              "description": "required for delivery order only. not required for pickup order."
+            },
+            "total_amount": {
+              "type": "string"
+            },
+            "payment_mode": {
+              "type": "string",
+              "description": "cash or online"
+            },
+            "customer_name": {
+              "type": "string"
+            },
+            "delivery_address": {
+              "type": "string",
+              "description": "Required for delivery order. For pickup order, add 'Pickup' as value"
+            },
+            "latitude": {
+              "type": "string",
+              "description": "required for delivery order only. not required for pickup order."
+            },
+            "longitude": {
+              "type": "string",
+              "description": "required for delivery order only. not required for pickup order."
+            },
+            "quantity_ordered": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            },
+            "delivery_or_pickup": {
+              "type": "string"
+            },
+            "payment_screenshot_id": {
+              "type": "string",
+              "description": "required for online payment only. for cash payment, pass 'NA'."
+            },
+            "food_items": {
+              "type": "string"
+            },
+            "order_amount": {
+              "type": "number",
+              "description": "total food amount without delivery charges"
+            }
+          },
+          "required": [
+            "delivery_charges",
+            "total_amount",
+            "payment_mode",
+            "customer_name",
+            "delivery_address",
+            "latitude",
+            "longitude",
+            "quantity_ordered",
+            "notes",
+            "delivery_or_pickup",
+            "payment_screenshot_id",
+            "food_items",
+            "order_amount"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetLocation",
+        "description": "Call this tool to get house or commercial shop loc... <Truncated in logs> ...SocietyName=DHA, IsCommercial=false. Only for DHA.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "Phase": {
+              "type": "number",
+              "description": "A numeric value of DHA Phase number like 9"
+            },
+            "Sector": {
+              "type": "string"
+            },
+            "House": {
+              "type": "string"
+            },
+            "SocietyName": {
+              "type": "string"
+            },
+            "IsCommercial": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "Phase",
+            "Sector",
+            "House",
+            "SocietyName",
+            "IsCommercial"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCustomerDetails",
+        "description": "Call this tool to get existing customer details in... <Truncated in logs> ...gle map link) and Unsubscribed (for alerts or not)",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Restaurant_Status",
+        "description": "Get restaurant status and general information about  restaurant",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "Read_Menu_Tool",
+        "description": "Fetches the restaurant menu with available food items, prices, and availability from Google Sheets",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "strict": false
+      }
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "# SYSTEM PROMPT — DESI FOOD WHATSAPP ORDER ASSISTA... <Truncated in logs> ...n\n13. CreateOrder  \n\n---\n\n**End of System Prompt**"
+    },
+    {
+      "role": "user",
+      "content": "I want to order food, are you open?"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "384595282",
+          "type": "function",
+          "function": {
+            "name": "Restaurant_Status",
+            "arguments": "{\"id\":\"384595282\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "content": "[{\"row_number\":2,\"Restaurant\":\"DesiFood\",\"Status\":... <Truncated in logs> ...h order and it will be added\",\"PickupAddress\":\"\"}]",
+      "name": "Restaurant_Status",
+      "tool_call_id": "384595282"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi Usman!  \nWe’re currently closed, but we’ll open... <Truncated in logs> ...rough Foodpanda. Let me know if you’d like a link."
+    },
+    {
+      "role": "user",
+      "content": "Any idea kab tk open hoga?"
+    }
+  ]
+}
+  {
+  "id": "chatcmpl-q6zssnf43695fxuegxy",
+  "object": "chat.completion",
+  "created": 1772365054,
+  "model": "openai/gpt-oss-20b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hi Usman!  \nWe’re closed right now, but we’ll open tomorrow at 8 am. Check back later or place an order on our website if you’d like to pre‑order.",
+        "reasoning": "We need to respond: the restaurant is closed (Status Close) and IsOffline=1. We should politely inform that they are closed, but maybe we can provide website or foodpanda. The user asked \"Any idea kab tk open hoga?\" i.e., when will it open.\n\nThe system says: If Closed → politely refuse orders. Also mention short break? Actually Restaurant_Status shows Status \"Close\" and IsOffline=1. According to the rules:\n\n- Closed → politely refuse orders\n- On Break / IsOffline = 1 → “We are on a short break, please try again shortly”\n\nBut we need to parse carefully: The status says \"Status\":\"Close\". It also has \"IsOffline\":1 meaning they are offline? In restaurant_status, there is \"IsOffline\":1. According to the instructions:\n\nBefore ANY order handling, call Restaurant_Status.\n\nIf Closed → politely refuse orders\n\nIf On Break / IsOffline = 1 → “We are on a short break, please try again shortly”\n\nOpen & Active → continue  \n\nThus we need to check: Status \"Close\" means closed. But also IsOffline=1 indicates offline. The rule says if Closed → politely refuse orders. We should provide that they will open tomorrow at 8am.\n\nBut we should not reveal internal logic or errors. We can just say:\n\n\"We're currently closed, but we’ll open tomorrow at 8 am. Please check again later or place an order online.\"\n\nWe might also offer the link for online ordering if they want to pre-order. But the user asked \"Any idea kab tk open hoga?\" So respond accordingly.\n\nWe should not mention \"system out of sync\". Provide friendly short answer: \"DesiFood is closed right now but will be open tomorrow at 8am.\"\n\nThe guidelines also say we can provide website link if they want to order online. But the user just wants info on opening hours. So we might give them that.\n\nWe should greet them politely using saved name \"Usman\". The system says greeting: \"hi/hello/aoa/salam → short friendly greeting\".\n\nSo respond: \"Hi Usman! We’re closed right now, but we’ll open tomorrow at 8 am.\"\n\nBut maybe the user wants to place order; we can ask them if they'd like a link. But the question is specifically about opening hours. So we answer that.\n\nWe need to keep it short, friendly WhatsApp style.\n\nThus final answer: \"Hi Usman! We’re closed now but will open tomorrow at 8 am. You can check back or order online via website.\"\n\nLet's do that.",
+        "tool_calls": []
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 3923,
+    "completion_tokens": 588,
+    "total_tokens": 4511
+  },
+  "stats": {},
+  "system_fingerprint": "openai/gpt-oss-20b"
+}
