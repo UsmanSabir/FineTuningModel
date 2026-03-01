@@ -196,61 +196,15 @@ def call_ollama(messages, model, base_url="http://localhost:11434", temperature=
     return r.json()["message"]["content"]
 
 # ─────────────────────────────────────────────────────────────
-# VALIDATION
+# VALIDATION  — imported from import_dataset.py (single source)
 # ─────────────────────────────────────────────────────────────
-
-def validate_example(ex: dict) -> tuple[bool, list]:
-    """Validate structure matches native tool_calls format. Returns (valid, errors)."""
-    errors = []
-
-    if "tools" not in ex:
-        errors.append("Missing top-level 'tools' key")
-    if "messages" not in ex:
-        errors.append("Missing top-level 'messages' key")
-        return False, errors
-
-    msgs = ex["messages"]
-    if len(msgs) < 4:
-        errors.append(f"Too few messages: {len(msgs)}")
-
-    if msgs[0].get("role") != "system":
-        errors.append("First message must be role=system")
-
-    # Check tool_calls / tool result pairing
-    pending_calls = {}
-    for i, m in enumerate(msgs):
-        role = m.get("role")
-
-        if role == "assistant" and m.get("tool_calls"):
-            # Validate tool call structure
-            for tc in m["tool_calls"]:
-                tc_id = tc.get("id")
-                fn = tc.get("function", {})
-                if not tc_id:
-                    errors.append(f"Message {i}: tool_call missing 'id'")
-                if not fn.get("name"):
-                    errors.append(f"Message {i}: tool_call missing function.name")
-                if tc_id:
-                    pending_calls[tc_id] = fn.get("name", "?")
-            if m.get("content") not in ("", None):
-                errors.append(f"Message {i}: assistant tool_call message should have empty content")
-
-        elif role == "tool":
-            tc_id = m.get("tool_call_id")
-            name  = m.get("name")
-            if not tc_id:
-                errors.append(f"Message {i}: tool result missing 'tool_call_id'")
-            if not name:
-                errors.append(f"Message {i}: tool result missing 'name'")
-            if tc_id and tc_id not in pending_calls:
-                errors.append(f"Message {i}: tool_call_id '{tc_id}' has no matching tool call")
-            if tc_id in pending_calls:
-                del pending_calls[tc_id]
-
-    if pending_calls:
-        errors.append(f"Unmatched tool calls (no result): {list(pending_calls.values())}")
-
-    return len(errors) == 0, errors
+try:
+    from import_dataset import validate_example
+except ImportError:
+    raise ImportError(
+        "import_dataset.py not found in the same directory.\n"
+        "validate_example lives there as the single source of truth."
+    )
 
 # ─────────────────────────────────────────────────────────────
 # GENERATION
@@ -273,7 +227,6 @@ def generate_example(scenario, provider, model, base_url, api_key, max_retries=3
                   if provider == "ollama" \
                   else call_openai_compatible([{"role": "user", "content": prompt}], model, base_url, api_key)
 
-            print(f"Parsing response...{raw} (response_end)", end=" ", flush=True)
             # Strip markdown fences
             raw = raw.strip()
             for fence in ["```json", "```"]:

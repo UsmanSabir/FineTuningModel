@@ -16,6 +16,15 @@ import os, json, time, argparse, random
 from pathlib import Path
 from datetime import datetime
 
+# validate_example lives in import_dataset.py — single source of truth
+try:
+    from import_dataset import validate_example
+except ImportError:
+    raise ImportError(
+        "import_dataset.py not found in the same directory.\n"
+        "Place it alongside this script — validate_example is shared across all scripts."
+    )
+
 # ─────────────────────────────────────────────────────────────
 # SUPPORTED MODELS
 # ─────────────────────────────────────────────────────────────
