@@ -173,7 +173,7 @@ Generate the conversation now:"""
 # API CLIENTS
 # ─────────────────────────────────────────────────────────────
 
-def call_openai_compatible(messages, model, base_url, api_key, temperature=0.7, max_tokens=6000):
+def call_openai_compatible(messages, model, base_url, api_key, temperature=0.7, max_tokens=36000):
     try:
         from openai import OpenAI
     except ImportError:
@@ -183,7 +183,7 @@ def call_openai_compatible(messages, model, base_url, api_key, temperature=0.7, 
     return r.choices[0].message.content
 
 
-def call_ollama(messages, model, base_url="http://localhost:11434", temperature=0.7, max_tokens=6000):
+def call_ollama(messages, model, base_url="http://localhost:11434", temperature=0.7, max_tokens=36000):
     try:
         import requests
     except ImportError:
