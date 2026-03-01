@@ -273,6 +273,7 @@ def generate_example(scenario, provider, model, base_url, api_key, max_retries=3
                   if provider == "ollama" \
                   else call_openai_compatible([{"role": "user", "content": prompt}], model, base_url, api_key)
 
+            print(f"Parsing response...{raw} (response_end)", end=" ", flush=True)
             # Strip markdown fences
             raw = raw.strip()
             for fence in ["```json", "```"]:
