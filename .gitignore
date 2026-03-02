@@ -4,3 +4,6 @@
 
 /.vs
 /myenv
+/.vscode
+/__pycache__
+*.pyc
