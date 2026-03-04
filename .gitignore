@@ -4,6 +4,8 @@
 
 /.vs
 /myenv
+/unsloth_env
 /.vscode
 /__pycache__
 *.pyc
+/nb/unsloth_compiled_cache
